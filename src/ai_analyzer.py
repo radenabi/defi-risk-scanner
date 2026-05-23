@@ -5,11 +5,11 @@ import httpx
 
 from .analyzer import RiskReport
 
-MIMO_API_BASE = "https://api.xiaomimimo.com/v1"
+MIMO_API_BASE = os.environ.get("MIMO_API_BASE", "http://localhost:20128/v1")
 
 
 def get_api_key() -> str | None:
-    return os.environ.get("MIMO_API_KEY")
+    return os.environ.get("MIMO_API_KEY") or os.environ.get("ROUTER_API_KEY")
 
 
 def ai_analyze_risk(report: RiskReport) -> str | None:
@@ -55,7 +55,7 @@ Format as concise markdown."""
                     "Content-Type": "application/json",
                 },
                 json={
-                    "model": "MiMo-v2.5",
+                    "model": "xmtp/mimo-v2.5-pro",
                     "messages": [
                         {"role": "system", "content": "You are a DeFi security expert."},
                         {"role": "user", "content": prompt},

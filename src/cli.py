@@ -25,7 +25,7 @@ def main():
 @click.option("--chain", "-c", default="ethereum", help="Blockchain (ethereum, bsc, arbitrum)")
 @click.option("--format", "-f", "fmt", type=click.Choice(["terminal", "markdown"]), default="terminal")
 @click.option("--output", "-o", type=click.Path(), default=None, help="Output file path")
-@click.option("--ai", is_flag=True, help="Enable AI-powered deep analysis (requires MIMO_API_KEY)")
+@click.option("--ai", is_flag=True, help="Enable AI-powered deep analysis (requires MIMO_API_KEY or ROUTER_API_KEY)")
 def scan(protocol, chain, fmt, output, ai):
     """Scan a DeFi protocol for risk factors.
 
@@ -61,7 +61,7 @@ def scan(protocol, chain, fmt, output, ai):
     if ai:
         api_key = get_api_key()
         if not api_key:
-            click.echo("\nWarning: MIMO_API_KEY not set. Skipping AI analysis.", err=True)
+            click.echo("\nWarning: MIMO_API_KEY or ROUTER_API_KEY not set. Skipping AI analysis.", err=True)
         else:
             click.echo("\nRunning AI analysis...")
             ai_report = ai_analyze_risk(report)
