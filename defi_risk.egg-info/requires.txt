@@ -1,6 +1,0 @@
-click>=8.1
-rich>=13.0
-httpx>=0.27
-
-[dev]
-pytest>=8.0
