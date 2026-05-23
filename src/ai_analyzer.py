@@ -47,7 +47,7 @@ Provide:
 Format as concise markdown."""
 
     try:
-        with httpx.Client(timeout=30) as client:
+        with httpx.Client(timeout=60) as client:
             resp = client.post(
                 f"{MIMO_API_BASE}/chat/completions",
                 headers={
@@ -62,10 +62,23 @@ Format as concise markdown."""
                     ],
                     "max_tokens": 2000,
                     "temperature": 0.3,
+                    "stream": False,
                 },
             )
             resp.raise_for_status()
-            data = resp.json()
-            return data["choices"][0]["message"]["content"]
+            # Handle SSE response from 9Router
+            text = resp.text
+            if text.startswith("data: "):
+                # Parse SSE format
+                import json
+                lines = text.strip().split("\n")
+                for line in lines:
+                    if line.startswith("data: ") and line != "data: [DONE]":
+                        data = json.loads(line[6:])
+                        return data["choices"][0]["message"]["content"]
+            else:
+                # Regular JSON response
+                data = resp.json()
+                return data["choices"][0]["message"]["content"]
     except Exception as e:
         return f"AI analysis failed: {e}"
